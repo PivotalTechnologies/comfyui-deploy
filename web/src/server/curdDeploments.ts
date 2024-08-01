@@ -6,8 +6,8 @@ import { deploymentsTable, workflowTable } from "@/db/schema";
 import { createNewWorkflow } from "@/server/createNewWorkflow";
 import { addCustomMachine } from "@/server/curdMachine";
 import { withServerPromise } from "@/server/withServerPromise";
-import { auth } from "@clerk/nextjs";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@/clerk/nextjs";
+import { clerkClient } from "@/clerk/nextjs/server";
 import slugify from "@sindresorhus/slugify";
 import { and, eq, isNull, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -19,7 +19,7 @@ export async function createDeployments(
   workflow_id: string,
   version_id: string,
   machine_id: string,
-  environment: DeploymentType["environment"],
+  environment: DeploymentType["environment"]
 ) {
   const { userId, orgId } = auth();
   if (!userId) throw new Error("No user id");
@@ -32,7 +32,7 @@ export async function createDeployments(
   const existingDeployment = await db.query.deploymentsTable.findFirst({
     where: and(
       eq(deploymentsTable.workflow_id, workflow_id),
-      eq(deploymentsTable.environment, environment),
+      eq(deploymentsTable.environment, environment)
     ),
   });
 
@@ -62,10 +62,10 @@ export async function createDeployments(
 
     const userName = workflow.org_id
       ? await clerkClient.organizations
-        .getOrganization({
-          organizationId: workflow.org_id,
-        })
-        .then((x) => x.name)
+          .getOrganization({
+            organizationId: workflow.org_id,
+          })
+          .then((x) => x.name)
       : workflow.user.name;
 
     await db.insert(deploymentsTable).values({
@@ -76,7 +76,10 @@ export async function createDeployments(
       environment,
       org_id: orgId,
       // only create share slug if this is public share
-      share_slug: environment == "public-share" ? slugify(`${userName} ${workflow.name}`) : null
+      share_slug:
+        environment == "public-share"
+          ? slugify(`${userName} ${workflow.name}`)
+          : null,
     });
   }
   revalidatePath(`/${workflow_id}`);
@@ -93,7 +96,7 @@ export async function findAllDeployments() {
     where: and(
       orgId
         ? eq(workflowTable.org_id, orgId)
-        : and(eq(workflowTable.user_id, userId), isNull(workflowTable.org_id)),
+        : and(eq(workflowTable.user_id, userId), isNull(workflowTable.org_id))
     ),
     columns: {
       name: true,
@@ -124,7 +127,7 @@ export async function findSharedDeployment(workflow_id: string) {
       eq(deploymentsTable.environment, "public-share"),
       isValidUUID(workflow_id)
         ? eq(deploymentsTable.id, workflow_id)
-        : eq(deploymentsTable.share_slug, workflow_id),
+        : eq(deploymentsTable.share_slug, workflow_id)
     ),
     with: {
       user: true,
@@ -150,15 +153,15 @@ export const removePublicShareDeployment = withServerPromise(
       .where(
         and(
           eq(deploymentsTable.environment, "public-share"),
-          eq(deploymentsTable.id, deployment_id),
-        ),
+          eq(deploymentsTable.id, deployment_id)
+        )
       )
       .returning();
 
     // revalidatePath(
     //   `/workflows/${removed.workflow_id}`
     // )
-  },
+  }
 );
 
 export const cloneWorkflow = withServerPromise(
@@ -166,7 +169,7 @@ export const cloneWorkflow = withServerPromise(
     const deployment = await db.query.deploymentsTable.findFirst({
       where: and(
         eq(deploymentsTable.environment, "public-share"),
-        eq(deploymentsTable.id, deployment_id),
+        eq(deploymentsTable.id, deployment_id)
       ),
       with: {
         version: true,
@@ -196,14 +199,14 @@ export const cloneWorkflow = withServerPromise(
     return {
       message: "Successfully cloned workflow",
     };
-  },
+  }
 );
 
 export const cloneMachine = withServerPromise(async (deployment_id: string) => {
   const deployment = await db.query.deploymentsTable.findFirst({
     where: and(
       eq(deploymentsTable.environment, "public-share"),
-      eq(deploymentsTable.id, deployment_id),
+      eq(deploymentsTable.id, deployment_id)
     ),
     with: {
       machine: true,
@@ -248,10 +251,10 @@ export async function findUserShareDeployment(share_id: string) {
         orgId
           ? eq(deploymentsTable.org_id, orgId)
           : and(
-            eq(deploymentsTable.user_id, userId),
-            isNull(deploymentsTable.org_id),
-          ),
-      ),
+              eq(deploymentsTable.user_id, userId),
+              isNull(deploymentsTable.org_id)
+            )
+      )
     );
 
   if (!deployment) throw new Error("No deployment found");
@@ -277,11 +280,11 @@ export const updateSharePageInfo = withServerPromise(
       .where(
         and(
           eq(deploymentsTable.environment, "public-share"),
-          eq(deploymentsTable.id, id),
-        ),
+          eq(deploymentsTable.id, id)
+        )
       )
       .returning();
 
     return { message: "Info Updated" };
-  },
+  }
 );

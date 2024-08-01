@@ -1,7 +1,7 @@
 "use server";
 
 import { getMachineById } from "@/server/curdMachine";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/clerk/nextjs";
 import jwt from "jsonwebtoken";
 import { getOrgOrUserDisplayName } from "@/server/getOrgOrUserDisplayName";
 import { withServerPromise } from "@/server/withServerPromise";
@@ -29,7 +29,7 @@ export const editWorkflowOnMachine = withServerPromise(
       process.env.JWT_SECRET!,
       {
         expiresIn: expireTime,
-      },
+      }
     );
 
     const userName = await getOrgOrUserDisplayName(orgId, userId);
@@ -41,9 +41,9 @@ export const editWorkflowOnMachine = withServerPromise(
     }
 
     return `${endpoint}?workflow_version_id=${encodeURIComponent(
-      workflow_version_id,
+      workflow_version_id
     )}&auth_token=${encodeURIComponent(token)}&org_display=${encodeURIComponent(
-      userName,
+      userName
     )}&origin=${encodeURIComponent(domain)}`;
-  },
+  }
 );

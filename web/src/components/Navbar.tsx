@@ -14,19 +14,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  OrganizationList,
-  OrganizationSwitcher,
-  UserButton,
-  useOrganization,
-} from "@clerk/nextjs";
+// import {
+//   OrganizationList,
+//   OrganizationSwitcher,
+//   UserButton,
+//   useOrganization,
+// } from "@clerk/nextjs";
 import { Github, Menu } from "lucide-react";
 import meta from "next-gen/config";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 export function Navbar() {
-  const { organization } = useOrganization();
+  // const { organization } = useOrganization();
   const _isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isDesktop, setIsDesktop] = useState(true);
   const [isSheetOpen, setSheetOpen] = useState(false);
@@ -63,11 +63,11 @@ export function Navbar() {
                   <PopoverTrigger asChild>
                     <Button variant="outline">
                       Organization
-                      {organization?.name && ` (${organization?.name})`}
+                      {/* {organization?.name && ` (${organization?.name})`} */}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80 border-0 bg-none shadow-none">
-                    <OrganizationList />
+                    {/* <OrganizationList /> */}
                   </PopoverContent>
                 </Popover>
               </div>
@@ -77,7 +77,7 @@ export function Navbar() {
         <a className="font-bold text-md md:text-lg hover:underline" href="/">
           {meta.name}
         </a>
-        {isDesktop && (
+        {/* {isDesktop && (
           <OrganizationSwitcher
             appearance={{
               elements: {
@@ -85,7 +85,7 @@ export function Navbar() {
               },
             }}
           />
-        )}
+        )} */}
       </div>
       <div className="flex flex-row items-center gap-2">
         {isDesktop && <NavbarMenu />}
@@ -96,13 +96,17 @@ export function Navbar() {
         >
           <a href="/docs">Docs</a>
         </Button>
-        <UserButton />
+        {/* <UserButton /> */}
         <Button
           asChild
           variant="outline"
           className="rounded-full aspect-square p-2"
         >
-          <a target="_blank" href="https://github.com/BennyKok/comfyui-deploy" rel="noreferrer">
+          <a
+            target="_blank"
+            href="https://github.com/BennyKok/comfyui-deploy"
+            rel="noreferrer"
+          >
             <Github />
           </a>
         </Button>

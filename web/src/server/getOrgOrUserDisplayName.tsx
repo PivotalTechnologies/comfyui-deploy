@@ -1,11 +1,11 @@
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@/clerk/nextjs";
 import { eq } from "drizzle-orm";
 
 export async function getOrgOrUserDisplayName(
   orgId: string | undefined | null,
-  userId: string,
+  userId: string
 ) {
   return orgId
     ? await clerkClient.organizations

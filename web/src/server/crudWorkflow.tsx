@@ -5,7 +5,7 @@ import {
   workflowVersionTable,
 } from "@/db/schema";
 import { APIKeyUserType } from "@/server/APIKeyBodyRequest";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/clerk/nextjs";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
@@ -56,7 +56,7 @@ export async function getAllUserWorkflow() {
 
 export async function getWorkflowVersion(
   apiUser: APIKeyUserType,
-  version_id: string,
+  version_id: string
 ) {
   const { org_id, user_id } = apiUser;
 

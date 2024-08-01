@@ -29,3 +29,11 @@ services:
     volumes:
       - ./aws:/etc/localstack/init/ready.d
       - ./aws:/app/web/aws
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env.docker
+    ports:
+      - "3000:3000" # Assuming the web service runs on port 3000

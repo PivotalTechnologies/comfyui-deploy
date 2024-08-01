@@ -10,7 +10,7 @@ import { machinesTable, workflowRunsTable } from "@/db/schema";
 import type { APIKeyUserType } from "@/server/APIKeyBodyRequest";
 import { getRunsData } from "@/server/getRunsData";
 import { ComfyAPI_Run } from "@/types/ComfyAPI_Run";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import "server-only";
@@ -38,7 +38,7 @@ export const createRun = withServerPromise(
         ? await db.query.machinesTable.findFirst({
             where: and(
               eq(machinesTable.id, machine_id),
-              eq(machinesTable.disabled, false),
+              eq(machinesTable.disabled, false)
             ),
           })
         : machine_id;
@@ -95,15 +95,14 @@ export const createRun = withServerPromise(
               node.inputs["default_value"] = inputs[key];
             }
           }
-
         });
       }
     }
 
     let prompt_id: string | undefined = undefined;
     const shareData = {
-      workflow_api_raw: workflow_api,
-      status_endpoint: `${origin}/api/update-run`,
+      workflow_api_raw: workflow_api, // Custom node now expects workflow_api_raw instead of workflow_api
+      status_endpoint: `${origin}/api/update-run`, // This is for status update
       file_upload_endpoint: `${origin}/api/file-upload`,
     };
 
@@ -148,7 +147,7 @@ export const createRun = withServerPromise(
             throw new Error(
               `Error creating run, ${
                 ___result.statusText
-              } ${await ___result.text()}`,
+              } ${await ___result.text()}`
             );
           console.log(_data, ___result);
           break;
@@ -182,7 +181,7 @@ export const createRun = withServerPromise(
             throw new Error(
               `Error creating run, ${
                 __result.statusText
-              } ${await __result.text()}`,
+              } ${await __result.text()}`
             );
           console.log(data, __result);
           break;
@@ -204,7 +203,7 @@ export const createRun = withServerPromise(
             let message = `Error creating run, ${_result.statusText}`;
             try {
               const result = await ComfyAPI_Run.parseAsync(
-                await _result.json(),
+                await _result.json()
               );
               message += ` ${result.node_errors}`;
             } catch (error) {}
@@ -237,7 +236,7 @@ export const createRun = withServerPromise(
       workflow_run_id: workflow_run[0].id,
       message: "Successful workflow run",
     };
-  },
+  }
 );
 
 export async function checkStatus(run_id: string) {

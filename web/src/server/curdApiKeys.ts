@@ -3,7 +3,7 @@
 import { db } from "@/db/db";
 import { apiKeyTable, authRequestsTable } from "@/db/schema";
 import { withServerPromise } from "@/server/withServerPromise";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/clerk/nextjs";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { revalidatePath } from "next/cache";
@@ -21,7 +21,7 @@ export const createAuthRequest = withServerPromise(
     return {
       message: "Auth request created, you may now return to your application.",
     };
-  },
+  }
 );
 
 export async function addNewAPIKey(name: string) {
@@ -34,7 +34,7 @@ export async function addNewAPIKey(name: string) {
   if (orgId) {
     token = jwt.sign(
       { user_id: userId, org_id: orgId },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET!
     );
   } else {
     token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET!);
@@ -98,7 +98,7 @@ export async function getAPIKeys() {
       where: and(
         eq(apiKeyTable.user_id, userId),
         isNull(apiKeyTable.org_id),
-        eq(apiKeyTable.revoked, false),
+        eq(apiKeyTable.revoked, false)
       ),
       orderBy: desc(apiKeyTable.created_at),
     });
